@@ -1,19 +1,13 @@
-import React from "react";
-import { waitFor, render, screen, fireEvent } from "@testing-library/react";
-import App from "./App";
+import React from 'react'
+import userEvent from '@testing-library/user-event'
+import { render, waitFor, screen} from '@testing-library/react'
 
-import { fetchShow as mockFetchShow } from "./api/fetchShow";
+import App from './App'
+import { fetchShow as mockFetchShow} from './api/fetchShow'
 
-// test ('render App without errors1', () => {
-//     render(<App/>)
-// })
+jest.mock('./api/fetchShow.js')
 
-
-jest.mock("./api/fetchShow");
-// console.log(mockFetchShow)
-
-test("render App without errors", async () => {
-  mockFetchShow.mockResolvedValueOnce({
+const results = {
     data: {
       image: { original: "" },
       name: "This is the name",
@@ -36,22 +30,29 @@ test("render App without errors", async () => {
           },
         ],
       },
-    },
+    }
+  }
+
+  test("render App without errors", async () => {
+    mockFetchShow.mockResolvedValueOnce(results);
+
+    render(<App />);
+  
+    const fetchingData = screen.queryAllByText(/fetching data/i)
+    expect(fetchingData).toBeInTheDocument
+  
+    await waitFor(() => {
+      expect(fetchingData).not.toBeInTheDocument
+
+      const name = screen.getByText(/the name/i)
+      const summary = screen.getByText(/the summary/i)
+  
+      expect(name).toHaveTextContent("This is the name")
+      expect(summary).toHaveTextContent("This is the Summary")
+      
+    })
+  
+  
   });
-  render(<App />);
-
-  const fetchingData = screen.queryAllByText(/fetching data/i)
-  expect(fetchingData).toBeInTheDocument
-
-  await waitFor(() => {
-    expect(fetchingData).not.toBeInTheDocument
-    const name = screen.getByText(/the name/i)
-    const summary = screen.getByText(/the summary/i)
-
-    expect(name).toHaveTextContent("This is the name")
-    expect(summary).toHaveTextContent("This is the Summary")
-  })
-
-
-});
-
+  
+  
