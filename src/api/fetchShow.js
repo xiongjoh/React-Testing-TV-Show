@@ -1,16 +1,15 @@
-import axios from 'axios'
+import axios from "axios";
 
 export const fetchShow = () => {
-    return axios
+  return axios
     .get(
       "https://api.tvmaze.com/singlesearch/shows?q=stranger-things&embed=episodes"
     )
-    .then(res => {
-        return res
+    .then((res) => {
+      return res;
     })
-    .catch(err => {
-        console.log(err)
-        return err
-    })
-
-  };
+    .catch((err) => {
+      console.log(err);
+      return err;
+    });
+};
